@@ -166,6 +166,23 @@ export const useSources = (notebookId?: string) => {
               });
             } catch (error) {
               console.error('Failed to generate notebook content:', error);
+              
+              // Update notebook status to failed if generation fails
+              try {
+                const { error: updateError } = await supabase
+                  .from('notebooks')
+                  .update({ generation_status: 'failed' })
+                  .eq('id', notebookId);
+                
+                if (updateError) {
+                  console.error('Failed to update notebook status:', updateError);
+                }
+              } catch (updateError) {
+                console.error('Error updating notebook status:', updateError);
+              }
+              
+              // Re-throw the error so it can be handled by the UI
+              throw new Error('Failed to generate notebook content. Please check your configuration and try again.');
             }
           } else {
             console.log('Source not ready for generation yet - missing required data');
@@ -220,6 +237,23 @@ export const useSources = (notebookId?: string) => {
               });
             } catch (error) {
               console.error('Failed to generate notebook content:', error);
+              
+              // Update notebook status to failed if generation fails
+              try {
+                const { error: updateError } = await supabase
+                  .from('notebooks')
+                  .update({ generation_status: 'failed' })
+                  .eq('id', notebookId);
+                
+                if (updateError) {
+                  console.error('Failed to update notebook status:', updateError);
+                }
+              } catch (updateError) {
+                console.error('Error updating notebook status:', updateError);
+              }
+              
+              // Re-throw the error so it can be handled by the UI
+              throw new Error('Failed to generate notebook content. Please check your configuration and try again.');
             }
           }
         }
